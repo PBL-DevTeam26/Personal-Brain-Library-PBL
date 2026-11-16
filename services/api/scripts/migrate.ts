@@ -1,9 +1,8 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pool } from '../src/db.js';
-const dir = resolve(process.cwd(), 'database/postgres/migrations');
-// Supports running from repository root or services/api.
-const actual = process.cwd().endsWith('services/api') ? resolve(process.cwd(), '../../database/postgres/migrations') : dir;
+import { repositoryRoot } from '../src/paths.js';
+const actual = resolve(repositoryRoot, 'database/postgres/migrations');
 try {
   await pool.query('CREATE TABLE IF NOT EXISTS schema_migrations (filename TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now())');
   for (const name of (await readdir(actual)).filter(x => x.endsWith('.sql')).sort()) {

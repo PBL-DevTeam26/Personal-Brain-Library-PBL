@@ -29,7 +29,7 @@ api.use(requireUser);
  */
 api.get('/topics', async (_req, res, next) => {
   try {
-    const result = await pool.query("SELECT id, canonical_key AS "canonicalKey", display_name AS "displayName" FROM topics WHERE status = 'active' ORDER BY display_name");
+    const result = await pool.query(`SELECT id, canonical_key AS "canonicalKey", display_name AS "displayName" FROM topics WHERE status = 'active' ORDER BY display_name`);
     res.json({ topics: result.rows });
   } catch (e) { next(e); }
 });
@@ -48,7 +48,7 @@ api.get('/topics', async (_req, res, next) => {
 api.get('/topics/recommendations', async (_req, res, next) => {
   const userId = res.locals.userId as string;
   try {
-    const result = await pool.query("SELECT id, canonical_key AS "canonicalKey", display_name AS "displayName" FROM topics WHERE status = 'active' ORDER BY canonical_key LIMIT 3");
+    const result = await pool.query(`SELECT id, canonical_key AS "canonicalKey", display_name AS "displayName" FROM topics WHERE status = 'active' ORDER BY canonical_key LIMIT 3`);
     const batchId = randomUUID();
     const client = await pool.connect();
     try {
@@ -95,7 +95,7 @@ api.post('/quiz/sessions', async (req, res, next) => {
     if (!topic.rowCount) { await client.query('ROLLBACK'); res.status(404).json({ error: { code: 'TOPIC_NOT_FOUND', message: 'Topic unavailable' } }); return; }
     const id = randomUUID();
     await client.query('INSERT INTO quiz_sessions (id,user_id,topic_id,status) VALUES ($1,$2,$3,$4)', [id,userId,input.data.topicId,'in_progress']);
-    const q = await client.query("SELECT id,prompt,question_type AS "questionType" FROM questions WHERE topic_id=$1 AND status='active' ORDER BY id LIMIT 5", [input.data.topicId]);
+    const q = await client.query(`SELECT id,prompt,question_type AS "questionType" FROM questions WHERE topic_id=$1 AND status='active' ORDER BY id LIMIT 5`, [input.data.topicId]);
     for (const [i, x] of q.rows.entries()) {
       await client.query('INSERT INTO session_questions (id,session_id,question_id,position) VALUES ($1,$2,$3,$4)', [randomUUID(),id,x.id,i+1]);
     }
