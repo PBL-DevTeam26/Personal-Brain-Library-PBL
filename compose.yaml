@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pbl}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pbl_local_only}
+      POSTGRES_DB: ${POSTGRES_DB:-pbl}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pbl_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  neo4j:
+    profiles: ["ai"]
+    image: neo4j:5.26-community
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/pbl_local_change_me}
+    ports:
+      - "127.0.0.1:7475:7474"
+      - "127.0.0.1:7688:7687"
+    volumes:
+      - pbl_neo4j_data:/data
+  n8n:
+    profiles: ["ai"]
+    image: n8nio/n8n:2.44.6
+    ports:
+      - "127.0.0.1:5679:5678"
+    environment:
+      N8N_HOST: localhost
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+    volumes:
+      - pbl_n8n_data:/home/node/.n8n
+  ml:
+    profiles: ["ml"]
+    build: ./services/ml
+    ports:
+      - "127.0.0.1:8001:8001"
+volumes:
+  pbl_postgres:
+  pbl_neo4j_data:
+  pbl_n8n_data:

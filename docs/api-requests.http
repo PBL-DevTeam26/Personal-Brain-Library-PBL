@@ -1,0 +1,29 @@
+@base = http://localhost:3001
+@user = 00000000-0000-4000-8000-000000000001
+@movies = 20000000-0000-4000-8000-000000000001
+@question = 30000000-0000-4000-8000-000000000001
+
+### Health
+GET {{base}}/health
+
+### Topics
+GET {{base}}/api/v1/topics
+x-dev-user-id: {{user}}
+
+### Baseline recommendations
+GET {{base}}/api/v1/topics/recommendations
+x-dev-user-id: {{user}}
+
+### Create session
+POST {{base}}/api/v1/quiz/sessions
+Content-Type: application/json
+x-dev-user-id: {{user}}
+
+{"topicId":"{{movies}}"}
+
+### Answer (replace session UUID from previous response)
+POST {{base}}/api/v1/quiz/sessions/REPLACE-WITH-SESSION-UUID/answers
+Content-Type: application/json
+x-dev-user-id: {{user}}
+
+{"questionId":"{{question}}","answer":"Science fiction","idempotencyKey":"a0000000-0000-4000-8000-000000000001"}
