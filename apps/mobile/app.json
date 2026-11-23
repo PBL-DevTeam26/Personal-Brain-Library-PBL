@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "ExploreXP",
+    "slug": "explorexp",
+    "scheme": "explorexp",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-router"],
+    "android": {"package": "com.explorexp.exam"},
+    "experiments": {"typedRoutes": false}
+  }
+}

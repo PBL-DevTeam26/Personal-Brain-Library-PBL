@@ -1,0 +1,17 @@
+[
+ {"code":"budget_friendly","domain":"shared","label":"Budgetvenlig"},
+ {"code":"premium","domain":"shared","label":"Eksklusiv"},
+ {"code":"casual","domain":"shared","label":"Uformel"},
+ {"code":"quiet","domain":"shared","label":"Rolig"},
+ {"code":"social","domain":"shared","label":"Social"},
+ {"code":"adventurous","domain":"shared","label":"Nysgerrig"},
+ {"code":"cuisine_asian","domain":"food","label":"Asiatisk mad"},
+ {"code":"cuisine_italian","domain":"food","label":"Italiensk mad"},
+ {"code":"plant_based","domain":"food","label":"Plantebaseret"},
+ {"code":"street_food","domain":"food","label":"Streetfood"},
+ {"code":"art_modern","domain":"culture","label":"Moderne kunst"},
+ {"code":"art_classical","domain":"culture","label":"Klassisk kunst"},
+ {"code":"history","domain":"culture","label":"Historie"},
+ {"code":"interactive","domain":"culture","label":"Interaktiv oplevelse"},
+ {"code":"science","domain":"culture","label":"Videnskab og teknologi"}
+]

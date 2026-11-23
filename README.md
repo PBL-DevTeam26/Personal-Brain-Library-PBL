@@ -1,80 +1,131 @@
-# Personal Brain Library (PBL)
+# ExploreXP · M1 foundation
 
-Bootstrap for the existing **PBL-DevTeam26/Personal-Brain-Library-PBL-** repository. This is a **local starter**, not a deployed system. No files have been pushed to GitHub.
+**React Native + Expo (JavaScript), Express, PostgreSQL + pgvector, Python MLP and Leaflet WebView.**
 
-## Scope delivered
+M1 prototype: 4 preference quiz packs (20 questions), anonymous local test profiles, XP, OSM place import, a Leaflet map, interest/not-interest feedback, structured recommendation baseline, and a supervised MLP training/evaluation pipeline. **The ML model is not yet validated on real user data.**
 
-- TypeScript / Express API with Zod runtime request validation.
-- PostgreSQL 17 schema, repeatable migrations, seed data, and parameterized SQL.
-- Topics, recommendations (deterministic fallback), quiz sessions and answers.
-- Transactional outbox when an answer is saved.
-- OpenAPI generated **code-first from route JSDoc** via swagger-jsdoc.
-- Starter Python FastAPI ML service (heuristic fallback only; **not a trained model**).
-- Docker Compose for PostgreSQL with optional Neo4j/n8n/Ollama profiles.
-- GitHub Actions, Vitest unit tests, decisions, backlog and M1.6 requirements.
+## Prerequisites
 
-**Not included as implemented:** real authentication, user account management, live n8n ingestion, graph sync, embedding/RAG, trained ML, Android/web UI. They are documented integration targets. The API *refuses startup* outside `development` until production auth is implemented.
+- Node.js 22.13+ (Expo SDK 58), npm, Docker Desktop, Python 3.11+.
+- PC and Android phone on same Wi-Fi; Expo Go compatible with Expo SDK 58.
+- Internet connection for npm/Expo, Overpass and Leaflet map tiles.
 
-## Quick start (local)
+## Start on Windows PowerShell
 
-Prerequisites: Docker Desktop, Node.js 22+, npm.
+Run each set in its own terminal. Commands assume you're in the extracted `explorexp-m1` folder.
 
-```bash
-cp .env.example .env
-# Windows PowerShell: Copy-Item .env.example .env
-docker compose up -d postgres
-npm --prefix services/api install
-npm --prefix services/api run db:migrate
-npm --prefix services/api run db:seed
-npm --prefix services/api run dev
+**1. Database:**
+
+```powershell
+docker compose up -d --wait db
 ```
 
-In a second terminal:
+**2. REST API and quiz seed:**
 
-```bash
-curl http://localhost:3001/health
-curl -H 'x-dev-user-id: 00000000-0000-4000-8000-000000000001' http://localhost:3001/api/v1/topics
-curl -H 'x-dev-user-id: 00000000-0000-4000-8000-000000000001' http://localhost:3001/api/v1/topics/recommendations
+```powershell
+cd services/api
+Copy-Item .env.example .env
+npm install
+npm run db:migrate
+npm run db:seed
+npm run places:import
+npm test
+npm run dev
 ```
 
-For POST calls, see `docs/api-requests.http` (VS Code REST Client format).
+Try `http://localhost:3101/health`. `places:import` fetches up to 25 restaurants and 25 museums from a small Copenhagen bounding box. If the public Overpass service is busy, retry later; the quiz API can still run.
 
-Swagger UI: http://localhost:3001/docs ; generated OpenAPI at `/openapi.json`. Run `npm --prefix services/api run openapi:export` to write `docs/openapi.generated.json`.
+**3. React Native app:**
 
-## Dev identity warning
-
-`x-dev-user-id` is ONLY enabled with `NODE_ENV=development` and `DEV_AUTH_ENABLED=true`, bound to the synthetic seeded user. **Never expose the API on the public internet in this mode.** Production authentication is a blocking milestone, not an option.
-
-## Testing
-
-```bash
-npm --prefix services/api test
-npm --prefix services/api run typecheck
-npm --prefix services/api run openapi:export
+```powershell
+cd apps/mobile
+Copy-Item .env.example .env
 ```
 
-## Structure
+Edit `.env`: replace `192.168.1.100` with your PC's actual local IPv4 address (`ipconfig`). **Do not use `localhost` on a physical Android phone.** Then:
 
-- `apps/mobile`: Expo app placeholder, planned next.
-- `services/api`: running API starter.
-- `services/ml`: FastAPI interface starter, no trained model.
-- `automation/n8n`: workflow contracts and planned workflows.
-- `database/postgres`: forward-only SQL migrations and seed.
-- `database/neo4j`: constraints and planned projection schema.
-- `infrastructure`: config and future deployment notes.
-- `docs`: M1.6 specification, ADRs, API examples, backlog.
-
-## Branch workflow for existing repository
-
-```bash
-git clone https://github.com/PBL-DevTeam26/Personal-Brain-Library-PBL-.git
-cd Personal-Brain-Library-PBL-
-git checkout -b feat/m1-bootstrap
-# Copy contents of ZIP into repository; inspect git diff first
-git add .
-git commit -m "chore: bootstrap PBL API, DB, contracts and documentation"
-git push -u origin feat/m1-bootstrap
-# Open PR; merge after review
+```powershell
+npm install
+npx expo install --fix
+npx expo-doctor
+npm run start
 ```
 
-Never commit `.env`, database dumps, personal responses, ML training datasets with personal data, or secrets.
+Scan the QR code in Expo Go. In Windows Firewall, permit inbound TCP 3101 **only for the trusted private LAN** as needed. Never expose this demo API to the public internet: it intentionally has no real authentication.
+
+**4. Optional Python ML service (a second terminal):**
+
+```powershell
+cd services/ml
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m unittest -v test_features
+python train.py --demo
+$env:ALLOW_SYNTHETIC_MODEL="1"
+python app.py
+```
+
+`--demo` trains on **synthetic** feedback for a pipeline smoke test. Its metrics do not measure real recommendation quality. If the Python service is offline or synthetic mode isn't explicitly enabled, the API falls back to a named **baseline** recommender, not a pretend ML model.
+
+## Flere testpersoner på samme telefon
+
+Forsiden viser den aktive person. Den eksisterende profil bliver automatisk Person 1 med samme bruger-ID, quizsvar, XP og stedbedømmelser som før.
+
+Når en ny deltager får telefonen, tryk **Opret ny person** på forsiden. Hver oprettelse giver et nyt bruger-ID, tomme quizzer, 0 XP og egne stedbedømmelser. Den nye person bliver aktiv; tidligere personers data bevares i databasen. Appen husker den aktive person efter genstart. Personnumre gælder denne installation; de er lokale etiketter for de separate bruger-ID'er. Der er endnu ingen knap til at skifte tilbage til tidligere personer.
+
+Lad hver deltager besvare quizzerne og derefter bedømme steder. Spring over gemmer ikke et fravalg. Disse er menneskelige besvarelser; eventuelle syntetiske profiler skal senere genereres og mærkes særskilt.
+
+Mobilens profiltests: kør `npm test` i `apps/mobile`.
+
+## Collect real supervised feedback
+
+1. Each tester installs/opens the app and receives a **separate randomly generated local demo identity** (stored with Expo SecureStore). No email or account is needed.
+2. Complete at least one quiz (preferably all four); the answers update the user's `user_preferences` vector.
+3. Open `Udforsk kortet` and rate different places from the `Hjælp modellen med at lære` card. Each explicit interest rating is a **label**; the preference vector is stored as a point-in-time snapshot.
+4. Aim for **10+ testers × 10-15 different ratings** each and some positive **and** negative examples. The training script enforces a lower technical minimum of 5 testers, 50 labels, and 10 examples per class, but more diversity is preferable.
+5. With API dependencies installed:
+
+```powershell
+cd services/api
+npm run ml:export
+cd ../ml
+python train.py
+python app.py
+```
+
+The training set is saved to `services/ml/data/feedback.json` (gitignored). Models and metrics are written to `services/ml/artifacts/` (gitignored). The training pipeline uses a **user-disjoint train/test split** and compares an MLP to a majority-class baseline. Real-data evaluation should also account for small-sample uncertainty and feedback exposure bias.
+
+**Do not treat quiz answers as labels.** They are features. Explicit place ratings are labels. Do not train on model-generated pseudo-labels and then claim a trustworthy evaluation.
+
+## Endpoints
+
+- `GET /health` (public diagnostic)
+- `POST /api/v1/demo-users` (create test profile)
+- `GET /api/v1/quizzes`, `GET /api/v1/quizzes/:id`, `POST /api/v1/quizzes/:id/submit`
+- `GET /api/v1/me/progress`
+- `GET /api/v1/places`, `GET /api/v1/survey`, `GET /api/v1/recommendations`
+- `POST /api/v1/places/:id/feedback` with `{"interested": true|false}`
+
+All `/api/v1` endpoints except demo user creation expect `X-Explore-User` containing the random demo UUID. This is **NOT production authentication**.
+
+## Important limitations
+
+- User identity is pseudonymous and intentionally unsecured; **development only**.
+- No live database, npm installation, device build or Overpass request was performed in the artifact-building environment. Those must be verified on the user's Windows machine.
+- OSM tags are sparse and do not imply atmosphere, price or detailed artistic interests; do not fabricate these as facts.
+- pgvector is installed and schema supports 384-dimensional embeddings. **Embeddings and RAG are deferred**, as agreed for the exam MVP.
+- n8n workflows are not deployed; the import script demonstrates the initial ingestion logic. See `workflows/n8n/README.md` for the integration boundary.
+- OpenStreetMap data: © OpenStreetMap contributors, ODbL. Attribution is included on the map. Respect Overpass public-instance and OSM tile usage policies.
+- The teacher must approve the exam topic.
+
+## Architecture
+
+```text
+React Native (Expo + JSX) -> Express REST API -> PostgreSQL + pgvector
+                                           \-> Python ML HTTP service (optional)
+Overpass API -> Node import script --------> PostgreSQL
+n8n (later) -> scheduled import/enrichment/quiz generation
+```
+
+Read `docs/data-architecture.md` and `docs/m1-checklist.md` before extending the system.

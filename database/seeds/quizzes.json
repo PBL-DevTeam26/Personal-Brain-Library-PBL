@@ -1,0 +1,597 @@
+[
+  {
+    "id": "food-style",
+    "title": "Mad og stemning",
+    "description": "Hvilke spiseoplevelser tiltaler dig?",
+    "domain": "food",
+    "xpReward": 100,
+    "questions": [
+      {
+        "id": "food-style-q1",
+        "prompt": "Hvor spiser du helst fredag aften?",
+        "options": [
+          {
+            "id": "food-style-q1-o1",
+            "label": "Et uformelt sted med god stemning",
+            "signals": {
+              "casual": 1.0,
+              "social": 0.6
+            }
+          },
+          {
+            "id": "food-style-q1-o2",
+            "label": "Et lille, roligt sted",
+            "signals": {
+              "quiet": 1.0,
+              "casual": 0.3
+            }
+          },
+          {
+            "id": "food-style-q1-o3",
+            "label": "En gennemført gourmetoplevelse",
+            "signals": {
+              "premium": 1.0,
+              "adventurous": 0.4
+            }
+          }
+        ]
+      },
+      {
+        "id": "food-style-q2",
+        "prompt": "Hvilket køkken vælger du først?",
+        "options": [
+          {
+            "id": "food-style-q2-o1",
+            "label": "Asiatisk",
+            "signals": {
+              "cuisine_asian": 1.0
+            }
+          },
+          {
+            "id": "food-style-q2-o2",
+            "label": "Italiensk",
+            "signals": {
+              "cuisine_italian": 1.0
+            }
+          },
+          {
+            "id": "food-style-q2-o3",
+            "label": "Jeg prøver gerne noget nyt",
+            "signals": {
+              "adventurous": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "food-style-q3",
+        "prompt": "Hvad betyder pris for dit valg?",
+        "options": [
+          {
+            "id": "food-style-q3-o1",
+            "label": "Det skal være billigt",
+            "signals": {
+              "budget_friendly": 1.0,
+              "premium": -0.5
+            }
+          },
+          {
+            "id": "food-style-q3-o2",
+            "label": "Jeg betaler gerne for kvalitet",
+            "signals": {
+              "premium": 0.8
+            }
+          },
+          {
+            "id": "food-style-q3-o3",
+            "label": "Jeg vælger efter oplevelsen",
+            "signals": {
+              "adventurous": 0.6
+            }
+          }
+        ]
+      },
+      {
+        "id": "food-style-q4",
+        "prompt": "Hvad trækker mest?",
+        "options": [
+          {
+            "id": "food-style-q4-o1",
+            "label": "Streetfood og små retter",
+            "signals": {
+              "street_food": 1.0,
+              "casual": 0.7
+            }
+          },
+          {
+            "id": "food-style-q4-o2",
+            "label": "Rolig middag ved bordet",
+            "signals": {
+              "quiet": 0.8
+            }
+          },
+          {
+            "id": "food-style-q4-o3",
+            "label": "Noget usædvanligt",
+            "signals": {
+              "adventurous": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "food-style-q5",
+        "prompt": "Hvem skal med?",
+        "options": [
+          {
+            "id": "food-style-q5-o1",
+            "label": "En større gruppe venner",
+            "signals": {
+              "social": 1.0
+            }
+          },
+          {
+            "id": "food-style-q5-o2",
+            "label": "En enkelt person",
+            "signals": {
+              "quiet": 0.7
+            }
+          },
+          {
+            "id": "food-style-q5-o3",
+            "label": "Jeg går gerne alene",
+            "signals": {
+              "quiet": 0.5,
+              "adventurous": 0.4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "food-discovery",
+    "title": "Smag og nysgerrighed",
+    "description": "Udforsk din kulinariske nysgerrighed",
+    "domain": "food",
+    "xpReward": 100,
+    "questions": [
+      {
+        "id": "food-discovery-q1",
+        "prompt": "Hvilken menu lyder bedst?",
+        "options": [
+          {
+            "id": "food-discovery-q1-o1",
+            "label": "Vegetarisk kreativ menu",
+            "signals": {
+              "plant_based": 1.0,
+              "adventurous": 0.4
+            }
+          },
+          {
+            "id": "food-discovery-q1-o2",
+            "label": "Ramen eller dim sum",
+            "signals": {
+              "cuisine_asian": 1.0
+            }
+          },
+          {
+            "id": "food-discovery-q1-o3",
+            "label": "Frisk pasta eller pizza",
+            "signals": {
+              "cuisine_italian": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "food-discovery-q2",
+        "prompt": "Hvordan har du det med ukendte retter?",
+        "options": [
+          {
+            "id": "food-discovery-q2-o1",
+            "label": "Det elsker jeg",
+            "signals": {
+              "adventurous": 1.0
+            }
+          },
+          {
+            "id": "food-discovery-q2-o2",
+            "label": "Hvis nogen anbefaler dem",
+            "signals": {
+              "adventurous": 0.4,
+              "social": 0.4
+            }
+          },
+          {
+            "id": "food-discovery-q2-o3",
+            "label": "Jeg foretrækker det velkendte",
+            "signals": {
+              "adventurous": -0.8
+            }
+          }
+        ]
+      },
+      {
+        "id": "food-discovery-q3",
+        "prompt": "Hvilken servering vælger du?",
+        "options": [
+          {
+            "id": "food-discovery-q3-o1",
+            "label": "Madbod og uformelt",
+            "signals": {
+              "street_food": 1.0,
+              "casual": 1.0
+            }
+          },
+          {
+            "id": "food-discovery-q3-o2",
+            "label": "Rolig café",
+            "signals": {
+              "quiet": 0.8,
+              "casual": 0.6
+            }
+          },
+          {
+            "id": "food-discovery-q3-o3",
+            "label": "Flere nøje udvalgte serveringer",
+            "signals": {
+              "premium": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "food-discovery-q4",
+        "prompt": "Hvad får dig til at vende tilbage?",
+        "options": [
+          {
+            "id": "food-discovery-q4-o1",
+            "label": "Rimelige priser",
+            "signals": {
+              "budget_friendly": 1.0
+            }
+          },
+          {
+            "id": "food-discovery-q4-o2",
+            "label": "Spændende smagskombinationer",
+            "signals": {
+              "adventurous": 1.0
+            }
+          },
+          {
+            "id": "food-discovery-q4-o3",
+            "label": "God stemning med venner",
+            "signals": {
+              "social": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "food-discovery-q5",
+        "prompt": "Hvad skal oplevelsen være?",
+        "options": [
+          {
+            "id": "food-discovery-q5-o1",
+            "label": "Helt uformel",
+            "signals": {
+              "casual": 1.0
+            }
+          },
+          {
+            "id": "food-discovery-q5-o2",
+            "label": "En særlig luksusaften",
+            "signals": {
+              "premium": 1.0
+            }
+          },
+          {
+            "id": "food-discovery-q5-o3",
+            "label": "Noget overraskende",
+            "signals": {
+              "adventurous": 1.0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "culture-art",
+    "title": "Din kunstsmag",
+    "description": "Find ud af hvilke udstillinger der tiltaler dig",
+    "domain": "culture",
+    "xpReward": 100,
+    "questions": [
+      {
+        "id": "culture-art-q1",
+        "prompt": "Hvad vil du helst se?",
+        "options": [
+          {
+            "id": "culture-art-q1-o1",
+            "label": "Ny eksperimenterende kunst",
+            "signals": {
+              "art_modern": 1.0,
+              "adventurous": 0.4
+            }
+          },
+          {
+            "id": "culture-art-q1-o2",
+            "label": "Klassiske malerier",
+            "signals": {
+              "art_classical": 1.0
+            }
+          },
+          {
+            "id": "culture-art-q1-o3",
+            "label": "Historiske genstande",
+            "signals": {
+              "history": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "culture-art-q2",
+        "prompt": "Hvordan vil du opleve et museum?",
+        "options": [
+          {
+            "id": "culture-art-q2-o1",
+            "label": "I mit eget tempo og ro",
+            "signals": {
+              "quiet": 1.0
+            }
+          },
+          {
+            "id": "culture-art-q2-o2",
+            "label": "Med aktiviteter og deltagelse",
+            "signals": {
+              "interactive": 1.0
+            }
+          },
+          {
+            "id": "culture-art-q2-o3",
+            "label": "Sammen med venner",
+            "signals": {
+              "social": 0.9
+            }
+          }
+        ]
+      },
+      {
+        "id": "culture-art-q3",
+        "prompt": "Hvad gør en udstilling spændende?",
+        "options": [
+          {
+            "id": "culture-art-q3-o1",
+            "label": "Nye perspektiver",
+            "signals": {
+              "art_modern": 0.8
+            }
+          },
+          {
+            "id": "culture-art-q3-o2",
+            "label": "Fortællinger fra fortiden",
+            "signals": {
+              "history": 0.9
+            }
+          },
+          {
+            "id": "culture-art-q3-o3",
+            "label": "At prøve noget selv",
+            "signals": {
+              "interactive": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "culture-art-q4",
+        "prompt": "Hvilken stemning søger du?",
+        "options": [
+          {
+            "id": "culture-art-q4-o1",
+            "label": "Stille og fordybende",
+            "signals": {
+              "quiet": 1.0
+            }
+          },
+          {
+            "id": "culture-art-q4-o2",
+            "label": "Energisk og levende",
+            "signals": {
+              "social": 0.6,
+              "interactive": 0.6
+            }
+          },
+          {
+            "id": "culture-art-q4-o3",
+            "label": "Overraskende",
+            "signals": {
+              "adventurous": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "culture-art-q5",
+        "prompt": "Hvilket museum vælger du spontant?",
+        "options": [
+          {
+            "id": "culture-art-q5-o1",
+            "label": "Kunstmuseum",
+            "signals": {
+              "art_classical": 0.5,
+              "art_modern": 0.5
+            }
+          },
+          {
+            "id": "culture-art-q5-o2",
+            "label": "Historisk museum",
+            "signals": {
+              "history": 1.0
+            }
+          },
+          {
+            "id": "culture-art-q5-o3",
+            "label": "Science-center",
+            "signals": {
+              "science": 1.0,
+              "interactive": 0.7
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "culture-discovery",
+    "title": "Kultur og opdagelser",
+    "description": "Udforsk oplevelser uden for din komfortzone",
+    "domain": "culture",
+    "xpReward": 100,
+    "questions": [
+      {
+        "id": "culture-discovery-q1",
+        "prompt": "Hvilken aktivitet frister mest?",
+        "options": [
+          {
+            "id": "culture-discovery-q1-o1",
+            "label": "Interaktiv installation",
+            "signals": {
+              "interactive": 1.0,
+              "art_modern": 0.6
+            }
+          },
+          {
+            "id": "culture-discovery-q1-o2",
+            "label": "Historisk rundvisning",
+            "signals": {
+              "history": 1.0
+            }
+          },
+          {
+            "id": "culture-discovery-q1-o3",
+            "label": "Teknologisk udstilling",
+            "signals": {
+              "science": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "culture-discovery-q2",
+        "prompt": "Hvilken fortælling foretrækker du?",
+        "options": [
+          {
+            "id": "culture-discovery-q2-o1",
+            "label": "Fremtidens opfindelser",
+            "signals": {
+              "science": 1.0
+            }
+          },
+          {
+            "id": "culture-discovery-q2-o2",
+            "label": "Fortidens mennesker",
+            "signals": {
+              "history": 1.0
+            }
+          },
+          {
+            "id": "culture-discovery-q2-o3",
+            "label": "Kunstnerens eksperimenter",
+            "signals": {
+              "art_modern": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "culture-discovery-q3",
+        "prompt": "Hvor vigtigt er det at deltage selv?",
+        "options": [
+          {
+            "id": "culture-discovery-q3-o1",
+            "label": "Meget vigtigt",
+            "signals": {
+              "interactive": 1.0
+            }
+          },
+          {
+            "id": "culture-discovery-q3-o2",
+            "label": "Lidt, hvis relevant",
+            "signals": {
+              "interactive": 0.4
+            }
+          },
+          {
+            "id": "culture-discovery-q3-o3",
+            "label": "Jeg vil helst bare kigge",
+            "signals": {
+              "interactive": -0.8,
+              "quiet": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "id": "culture-discovery-q4",
+        "prompt": "Hvad gør et besøg mindeværdigt?",
+        "options": [
+          {
+            "id": "culture-discovery-q4-o1",
+            "label": "At lære noget nyt",
+            "signals": {
+              "science": 0.6,
+              "history": 0.6
+            }
+          },
+          {
+            "id": "culture-discovery-q4-o2",
+            "label": "At opleve noget overraskende",
+            "signals": {
+              "adventurous": 1.0,
+              "art_modern": 0.5
+            }
+          },
+          {
+            "id": "culture-discovery-q4-o3",
+            "label": "Tid til fordybelse",
+            "signals": {
+              "quiet": 1.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "culture-discovery-q5",
+        "prompt": "Vælg en spontan eftermiddagsplan",
+        "options": [
+          {
+            "id": "culture-discovery-q5-o1",
+            "label": "Design og samtidskunst",
+            "signals": {
+              "art_modern": 1.0
+            }
+          },
+          {
+            "id": "culture-discovery-q5-o2",
+            "label": "Arkæologi og historie",
+            "signals": {
+              "history": 1.0
+            }
+          },
+          {
+            "id": "culture-discovery-q5-o3",
+            "label": "Eksperimenter og teknologi",
+            "signals": {
+              "science": 1.0,
+              "interactive": 0.4
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

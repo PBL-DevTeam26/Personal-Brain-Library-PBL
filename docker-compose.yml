@@ -1,0 +1,18 @@
+services:
+  db:
+    image: pgvector/pgvector:0.8.7-pg17-trixie
+    environment:
+      POSTGRES_DB: explorexp
+      POSTGRES_USER: explorexp
+      POSTGRES_PASSWORD: explorexp_local_only
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - explorexp_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U explorexp -d explorexp"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+volumes:
+  explorexp_pgdata:
