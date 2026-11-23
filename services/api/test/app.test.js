@@ -35,6 +35,12 @@ async function withApi(t, queries, run) {
  }
 }
 
+test('Database identity is available before user authentication',async t=>{
+ await withApi(t,[{sql:/SELECT id FROM app_instance/,params:undefined,rows:[{id:'database-1'}]}],async request=>{
+  assert.deepEqual(await request('/instance'),{status:200,body:{instanceId:'database-1'}});
+ });
+});
+
 test('Quiz list uses the authenticated user and returns completion state', async t => {
  const rows = [{ id: 'quiz-1', title: 'Quiz', completed: true }];
  await withApi(t, [{ sql: /FROM quizzes q LEFT JOIN quiz_submissions/, params: [userId], rows }], async request => {

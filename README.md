@@ -6,6 +6,8 @@ M1 prototype: 4 preference quiz packs (20 questions), anonymous local test profi
 
 ## Prerequisites
 
+**Ny laptop / samme telefon:** følg [vejledningen til separat database og profiler](docs/laptop-setup.md). Den beskriver også opdatering af den eksisterende PC uden tab af svar.
+
 - Node.js 22.13+ (Expo SDK 58), npm, Docker Desktop, Python 3.11+.
 - PC and Android phone on same Wi-Fi; Expo Go compatible with Expo SDK 58.
 - Internet connection for npm/Expo, Overpass and Leaflet map tiles.

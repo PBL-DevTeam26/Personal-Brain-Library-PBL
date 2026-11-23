@@ -51,6 +51,7 @@ test('API requests use the active person after creation and preserve person 1',a
  apiSource=apiSource.replace("'expo-secure-store'",JSON.stringify(storageUrl)).replace("'./participants'",JSON.stringify(participantsUrl)).replace("process.env.EXPO_PUBLIC_API_BASE_URL","'http://test.invalid'");
  const headers=[];
  t.mock.method(globalThis,'fetch',async(url,options)=>{
+  if(url.endsWith('/instance'))return {ok:true,json:async()=>({instanceId:'desktop-db'})};
   if(url.endsWith('/demo-users'))return {ok:true,json:async()=>({userId:'second-person'})};
   headers.push(options.headers['X-Explore-User']);return {ok:true,json:async()=>({})};
  });
@@ -58,6 +59,36 @@ test('API requests use the active person after creation and preserve person 1',a
  await api.request('/api/v1/me/progress');
  assert.equal((await api.createNextPerson()).number,2);
  await api.request('/api/v1/quizzes');
- assert.deepEqual(headers,['original-person','second-person']);
- assert.equal(JSON.parse(f.data.get('explorexp_participants_v1')).people[0].id,'original-person');
+ assert.deepEqual(headers,['original-person','original-person','second-person']);
+ assert.equal(JSON.parse(f.data.get('explorexp_people_desktop-db')).people[0].id,'original-person');
+});
+
+test('Two databases keep separate people and switching back restores the original',async()=>{
+ const f=fixture();await f.store.getCurrent();await f.store.createNext();
+ const original=await f.store.getCurrent();
+ const desktop=createParticipantStore({...f,instanceId:'desktop',validateLegacyUser:async id=>id===original.id});
+ assert.deepEqual(await desktop.getCurrent(),original);
+ const laptop=createParticipantStore({...f,instanceId:'laptop',validateLegacyUser:async()=>false});
+ const laptopPerson=await laptop.getCurrent();
+ assert.equal(laptopPerson.number,1);assert.notEqual(laptopPerson.id,original.id);
+ await laptop.createNext();
+ const desktopRestart=createParticipantStore({...f,instanceId:'desktop',validateLegacyUser:async()=>{throw new Error('Must not revalidate saved registry')}});
+ assert.deepEqual(await desktopRestart.getCurrent(),original);
+ assert.equal(JSON.parse(f.data.get('explorexp_participants_v1')).currentId,original.id);
+});
+
+test('A network error during legacy validation never replaces the existing profile',async()=>{
+ const f=fixture();await f.store.getCurrent();
+ const store=createParticipantStore({...f,instanceId:'offline',validateLegacyUser:async()=>{throw new Error('offline')}});
+ await assert.rejects(store.getCurrent(),/offline/);assert.equal(f.count,0);
+ assert.equal(f.data.has('explorexp_people_offline'),false);
+ assert.equal((await f.store.getCurrent()).id,'original-person');
+});
+
+test('Legacy single-user identity is adopted only by the matching database',async()=>{
+ const f=fixture();
+ const desktop=createParticipantStore({...f,instanceId:'desktop',validateLegacyUser:async()=>true});
+ assert.equal((await desktop.getCurrent()).id,'original-person');assert.equal(f.count,0);
+ const laptop=createParticipantStore({...f,instanceId:'laptop',validateLegacyUser:async()=>false});
+ assert.notEqual((await laptop.getCurrent()).id,'original-person');assert.equal(f.count,1);
 });

@@ -13,6 +13,13 @@ export function createApp() {
  app.use(cors()); // Local demo only. Configure origin and authentication before production.
  app.use(express.json({limit:'64kb'}));
  app.get('/health',(_req,res)=>res.json({status:'ok',service:'explorexp-api'}));
+ app.get('/api/v1/instance',async(_req,res,next)=>{
+  try{
+   const r=await pool.query('SELECT id FROM app_instance WHERE singleton=true');
+   if(!r.rows.length)return sendError(res,503,'MIGRATION_REQUIRED','Run npm run db:migrate before using the app');
+   res.set('Cache-Control','no-store').json({instanceId:r.rows[0].id});
+  }catch(e){next(e)}
+ });
 
  app.post('/api/v1/demo-users',async(_req,res,next)=>{
   try {
