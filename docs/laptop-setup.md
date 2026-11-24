@@ -11,32 +11,41 @@ git clone --branch feat/explorexp-m1 https://github.com/PBL-DevTeam26/Personal-B
 cd Personal-Brain-Library-PBL
 docker compose -p explorexp-m1 up -d --wait db
 cd services/api
-Copy-Item .env.example .env
-npm ci
-npm run db:migrate
-npm run db:seed
-npm run places:import
-npm run dev
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
+npm.cmd ci
+npm.cmd run db:migrate
+npm.cmd run db:seed
+npm.cmd run dev
 ```
 
 Brug det samme Compose-projektnavn `explorexp-m1` ved senere opstarter. Laptoppen bruger sin egen volumen, også selv om navnet er det samme som på PC'en. Hvis port 55432 allerede er optaget på laptoppen, stop og undersøg hvilken lokal database der bruger den; slet ikke dens volumen for at frigøre porten.
+
+Kontrollér API'et på `http://localhost:3101/health`. Kør `npm.cmd run places:import` fra `services/api` i en anden terminal for at fylde kortet med OSM-steder. Du kan bruge quizzerne, mens Overpass er utilgængelig.
+
+Importen sender en afgrænset forespørgsel med en `User-Agent`, der angiver projekt, formål og repository. Ved HTTP 406 eller 429 skal du kontrollere udbyderens regler og vente mindst 30 sekunder før et nyt forsøg. Se [regler for den offentlige Overpass-instans](https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances).
 
 Åbn en anden terminal i projektmappen:
 
 ```powershell
 cd apps/mobile
-Copy-Item .env.example .env
-npm ci
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
+npm.cmd ci
 ipconfig
 ```
 
 Ret `EXPO_PUBLIC_API_BASE_URL` i `apps/mobile/.env` til laptopens aktuelle IPv4-adresse, fx `http://192.168.1.42:3101`. Telefon og laptop skal være på samme netværk. Tillad API-port 3101 på det private netværk, hvis Windows Firewall spørger.
 
 ```powershell
-npm run start -- --clear
+npm.cmd run start -- --clear
 ```
 
 Åbn laptopens QR-kode i Expo Go, og genindlæs appen helt. Brug ikke den gamle Expo-session fra PC'en.
+
+### Fejlsøgning på Android
+
+- Kontrollér, at telefonen bruger [Expo Go til SDK 58](https://expo.dev/go). Fra `apps/mobile` kan `npx.cmd expo-doctor` kontrollere projektets Expo-afhængigheder.
+- Åbn `http://<laptopens IPv4>:3101/health` i telefonens browser. Hvis det fejler, kontrollér Wi-Fi og Windows Firewall. Skole- og gæstenetværk kan isolere klienter. Prøv et netværk, hvor telefon og laptop kan nå hinanden, og opdatér derefter IP-adressen i `apps/mobile/.env`.
+- Metro bruger som standard TCP-port 8081. Hvis API'et kan nås fra telefonen, men QR-koden giver timeout, kontrollér også denne port. Brug kun firewalladgang på et betroet privat netværk.
 
 ## Profiler på samme telefon
 

@@ -3,6 +3,7 @@ import { pool } from '../src/db.js';
 const bbox='55.62,12.47,55.75,12.67';
 const q=`[out:json][timeout:60];(nwr["amenity"="restaurant"](${bbox});nwr["tourism"="museum"](${bbox}););out center;`;
 const endpoint=process.env.OVERPASS_URL || 'https://overpass-api.de/api/interpreter';
+const userAgent='ExploreXP-M1/0.1 (educational Copenhagen restaurant and museum map import; +https://github.com/PBL-DevTeam26/Personal-Brain-Library-PBL)';
 const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),70000);
 const tagFeatures=(kind,tags)=>{
   const f={};const cuisine=(tags.cuisine||'').toLowerCase().split(/[;,]/);
@@ -20,7 +21,10 @@ const tagFeatures=(kind,tags)=>{
   return f;
 };
 try{
- const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':'ExploreXP-M1/0.1 (educational prototype)'},body:new URLSearchParams({data:q}),signal:controller.signal});
+ const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':userAgent},body:new URLSearchParams({data:q}),signal:controller.signal});
+ if(response.status===406||response.status===429){
+  throw new Error(`Overpass returned ${response.status}. Check the provider's usage policy and wait at least 30 seconds before trying again.`);
+ }
  if(!response.ok)throw new Error(`Overpass returned ${response.status}`);
  const result=await response.json();const rows=result.elements
   .filter(x=>x.tags?.name && (x.lat??x.center?.lat)!=null && (x.lon??x.center?.lon)!=null)

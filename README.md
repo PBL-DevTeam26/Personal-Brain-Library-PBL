@@ -14,43 +14,40 @@ M1 prototype: 4 preference quiz packs (20 questions), anonymous local test profi
 
 ## Start on Windows PowerShell
 
-Run each set in its own terminal. Commands assume you're in the extracted `explorexp-m1` folder.
+Run each set in its own terminal, starting from the repository root. Use `npm.cmd` in PowerShell so the commands also work when PowerShell script execution is restricted.
 
 **1. Database:**
 
 ```powershell
-docker compose up -d --wait db
+docker compose -p explorexp-m1 up -d --wait db
 ```
 
 **2. REST API and quiz seed:**
 
 ```powershell
 cd services/api
-Copy-Item .env.example .env
-npm install
-npm run db:migrate
-npm run db:seed
-npm run places:import
-npm test
-npm run dev
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
+npm.cmd ci
+npm.cmd run db:migrate
+npm.cmd run db:seed
+npm.cmd test
+npm.cmd run dev
 ```
 
-Try `http://localhost:3101/health`. `places:import` fetches up to 25 restaurants and 25 museums from a small Copenhagen bounding box. If the public Overpass service is busy, retry later; the quiz API can still run.
+Try `http://localhost:3101/health`. To populate the map, run `npm.cmd run places:import` from `services/api` in a separate terminal. It fetches up to 25 restaurants and 25 museums from a small Copenhagen bounding box. The quiz API can run while the public Overpass service is unavailable.
 
 **3. React Native app:**
 
 ```powershell
 cd apps/mobile
-Copy-Item .env.example .env
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
 Edit `.env`: replace `192.168.1.100` with your PC's actual local IPv4 address (`ipconfig`). **Do not use `localhost` on a physical Android phone.** Then:
 
 ```powershell
-npm install
-npx expo install --fix
-npx expo-doctor
-npm run start
+npm.cmd ci
+npm.cmd run start -- --clear
 ```
 
 Scan the QR code in Expo Go. In Windows Firewall, permit inbound TCP 3101 **only for the trusted private LAN** as needed. Never expose this demo API to the public internet: it intentionally has no real authentication.
