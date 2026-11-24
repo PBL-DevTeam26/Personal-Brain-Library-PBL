@@ -82,18 +82,8 @@ Mobilens profiltests: kør `npm test` i `apps/mobile`.
 1. Each tester installs/opens the app and receives a **separate randomly generated local demo identity** (stored with Expo SecureStore). No email or account is needed.
 2. Complete at least one quiz (preferably all four); the answers update the user's `user_preferences` vector.
 3. Open `Udforsk kortet` and rate different places from the `Hjælp modellen med at lære` card. Each explicit interest rating is a **label**; the preference vector is stored as a point-in-time snapshot.
-4. Aim for **10+ testers × 10-15 different ratings** each and some positive **and** negative examples. The training script enforces a lower technical minimum of 5 testers, 50 labels, and 10 examples per class, but more diversity is preferable.
-5. With API dependencies installed:
-
-```powershell
-cd services/api
-npm run ml:export
-cd ../ml
-python train.py
-python app.py
-```
-
-The training set is saved to `services/ml/data/feedback.json` (gitignored). Models and metrics are written to `services/ml/artifacts/` (gitignored). The training pipeline uses a **user-disjoint train/test split** and compares an MLP to a majority-class baseline. Real-data evaluation should also account for small-sample uncertainty and feedback exposure bias.
+4. Aim for **10+ testers × 10-15 different ratings** each and some positive **and** negative examples. The offline evaluation requires at least 5 testers, 50 labels and 10 labels per class.
+5. Follow [ML Baseline v1](docs/ml-baseline-v1.md) to export the ratings and run leave-one-user-out evaluation of majority class, logistic regression and a Keras MLP.
 
 **Do not treat quiz answers as labels.** They are features. Explicit place ratings are labels. Do not train on model-generated pseudo-labels and then claim a trustworthy evaluation.
 

@@ -16,5 +16,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: pip install -r services/ml/requirements.txt
-      - run: cd services/ml && python -m unittest -v test_features
+      - run: pip install -r services/ml/requirements-baseline.txt
+      - run: cd services/ml && python -m unittest discover -v

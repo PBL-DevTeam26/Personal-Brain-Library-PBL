@@ -34,8 +34,8 @@ No implicit label is created merely because a user clicked a recommendation. A c
 ## Training and validation policy
 
 - Training examples require a non-empty preference snapshot and an explicit human label.
-- Split by user ID, never random rows. The same participant's feedback must not appear in both train and test.
-- Compare model with a majority-class baseline; report accuracy, balanced accuracy and ROC AUC alongside label counts.
+- Use leave-one-user-out splits. Each participant's feedback is evaluated by models fitted on the other participants.
+- Report accuracy, balanced accuracy, precision, recall, F1 and confusion matrices for the majority-class baseline and both learned models. See [ML Baseline v1](ml-baseline-v1.md).
 - A small sample of volunteer users is **pilot evidence**, not proof of a generalizable production recommendation system.
 - If more than one person is involved, obtain consent for anonymous feedback collection and keep the exported feedback file private.
 - Scraped descriptions and LLM-added features need provenance and auditing before training.

@@ -1,8 +1,4 @@
-"""Train a supervised preference-matching MLP on real interested/not-interested labels.
-
-Quiz answer signals are input features, NEVER ground-truth labels.
-Use --demo only for a technical pipeline smoke test; its metrics are synthetic.
-"""
+"""Evaluate real ratings offline or train the existing synthetic serving demo."""
 import argparse
 import json
 from pathlib import Path
@@ -16,6 +12,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.exceptions import ConvergenceWarning
+from evaluate import evaluate_baseline
 from features import CODES, samples
 
 ROOT=Path(__file__).resolve().parent
@@ -36,7 +33,7 @@ def make_synthetic_demo():
                 'place_features':dict(zip(CODES,p.tolist())), 'label':bool(label)})
     return result
 
-def train(rows, mode):
+def train_demo(rows):
     if len(rows)<50 or len(set(str(x['user_id']) for x in rows))<5:
         raise ValueError('Need >=50 explicit place ratings from >=5 users. Quiz answers alone are not labels.')
     X,y,groups=samples(rows)
@@ -56,7 +53,7 @@ def train(rows, mode):
         clf.fit(X[tr],y[tr])
     pred=clf.predict(X[te]);positive_index=list(clf.classes_).index(1)
     prob=clf.predict_proba(X[te])[:,positive_index]
-    result={'mode':mode,'n_samples':len(rows),'n_users':len(set(groups)),
+    result={'mode':'synthetic_demo','n_samples':len(rows),'n_users':len(set(groups)),
         'train_samples':len(tr),'test_samples':len(te),
         'baseline_accuracy':round(float(accuracy_score(y[te],baseline.predict(X[te]))),4),
         'model_accuracy':round(float(accuracy_score(y[te],pred)),4),
@@ -70,10 +67,17 @@ def train(rows, mode):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser()
-    parser.add_argument('--demo',action='store_true',help='Train only on synthetic demonstration data')
+    source=parser.add_mutually_exclusive_group()
+    source.add_argument('--demo',action='store_true',help='Train only on synthetic demonstration data')
+    source.add_argument('--input',type=Path,help='Real feedback JSON exported by ml:export')
     args=parser.parse_args()
-    source=ROOT/'data/feedback.json'
-    rows=make_synthetic_demo() if args.demo else json.loads(source.read_text())
-    metrics=train(rows,'synthetic_demo' if args.demo else 'real_feedback')
-    print(json.dumps(metrics,indent=2))
-    if args.demo:print('WARNING: Synthetic demo metrics are NOT evidence of real recommendation quality.')
+    if args.demo:
+        print(json.dumps(train_demo(make_synthetic_demo()), indent=2))
+        print('WARNING: Synthetic demo metrics are NOT evidence of real recommendation quality.')
+    else:
+        path = args.input or ROOT / 'data/feedback.json'
+        metrics = evaluate_baseline(json.loads(path.read_text(encoding='utf-8')))
+        report = ROOT / 'artifacts/baseline-v1/metrics.json'
+        report.parent.mkdir(parents=True, exist_ok=True)
+        report.write_text(json.dumps(metrics, indent=2) + '\n', encoding='utf-8')
+        print(json.dumps(metrics, indent=2))
