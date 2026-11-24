@@ -5,6 +5,14 @@ import {Page,Panel,Action,ErrorText,s} from '../src/ui';
 import {useParticipant} from '../src/ParticipantContext';
 export default function Home(){
  const {person,busy,error,startNext}=useParticipant();
+ if(process.env.EXPO_PUBLIC_PILOT2==='1')return <Page>
+  <Text style={s.heading}>ExploreXP · Pilot 2</Text>
+  <Panel><Text style={s.title}>Aktiv profil: Person {person.number}</Text>
+   <Action title="Åbn Pilot 2" disabled={busy} onPress={()=>router.push('/pilot')}/>
+   <Action title={busy?'Opretter...':'Opret profil til næste deltager'} disabled={busy} onPress={startNext}/>
+   <ErrorText message={error}/>
+  </Panel>
+ </Page>;
  return <Page>
  <Text style={s.heading}>ExploreXP</Text>
  <Panel><Text style={s.title}>Aktiv profil: Person {person.number}</Text>

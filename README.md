@@ -36,6 +36,8 @@ npm.cmd run dev
 
 Try `http://localhost:3101/health`. To populate the map, run `npm.cmd run places:import` from `services/api` in a separate terminal. It fetches up to 25 restaurants and 25 museums from a small Copenhagen bounding box. The quiz API can run while the public Overpass service is unavailable.
 
+Run `npm.cmd run places:backfill-osm-features` from `services/api` to add cuisine, dietary and history features from stored OSM tags. The command only inserts missing feature rows and can be rerun.
+
 **3. React Native app:**
 
 ```powershell
@@ -86,6 +88,8 @@ Mobilens profiltests: kør `npm test` i `apps/mobile`.
 5. Follow [ML Baseline v1](docs/ml-baseline-v1.md) to export the ratings and run leave-one-user-out evaluation of majority class, logistic regression and a Keras MLP.
 
 **Do not treat quiz answers as labels.** They are features. Explicit place ratings are labels. Do not train on model-generated pseudo-labels and then claim a trustworthy evaluation.
+
+Before recruiting for the second round, follow the [Pilot 2 readiness checks](docs/pilot-2-readiness.md).
 
 ## Endpoints
 

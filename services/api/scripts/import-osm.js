@@ -1,4 +1,5 @@
 import { pool } from '../src/db.js';
+import { osmTagFeatures } from '../src/osm-features.js';
 // Copenhagen central bounding box. Deliberately limited for polite Overpass use.
 const bbox='55.62,12.47,55.75,12.67';
 const q=`[out:json][timeout:60];(nwr["amenity"="restaurant"](${bbox});nwr["tourism"="museum"](${bbox}););out center;`;
@@ -6,16 +7,11 @@ const endpoint=process.env.OVERPASS_URL || 'https://overpass-api.de/api/interpre
 const userAgent='ExploreXP-M1/0.1 (educational Copenhagen restaurant and museum map import; +https://github.com/PBL-DevTeam26/Personal-Brain-Library-PBL)';
 const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),70000);
 const tagFeatures=(kind,tags)=>{
-  const f={};const cuisine=(tags.cuisine||'').toLowerCase().split(/[;,]/);
-  if(kind==='restaurant'){
-    if(cuisine.some(x=>/japanese|chinese|thai|vietnamese|korean|asian|indian/.test(x)))f.cuisine_asian=1;
-    if(cuisine.some(x=>/italian|pizza|pasta/.test(x)))f.cuisine_italian=1;
-    if(tags['diet:vegan']==='yes'||tags['diet:vegetarian']==='yes')f.plant_based=1;
-  }else{
+  const f=osmTagFeatures(kind,tags);
+  if(kind==='museum'){
     const type=[tags.museum,tags['museum:type']].filter(Boolean).join(' ').toLowerCase();
     if(/modern|contemporary/.test(type))f.art_modern=1;
     // 'art' alone is not evidence that a museum specializes in classical art.
-    if(/history|historical|archaeolog/.test(type))f.history=1;
     if(/science|technology|technical/.test(type))f.science=1;
   }
   return f;

@@ -9,6 +9,10 @@
     "db:migrate": "node scripts/migrate.js",
     "db:seed": "node scripts/seed.js",
     "places:import": "node scripts/import-osm.js",
+    "places:backfill-osm-features": "node scripts/backfill-osm-features.js",
+    "pilot:prepare": "node scripts/prepare-pilot.js",
+    "pilot:audit": "node scripts/audit-pilot.js",
+    "pilot:test:e2e": "node test/pilot.integration.js",
     "ml:export": "node scripts/export-feedback.js",
     "test": "node --test test/*.test.js"
   },

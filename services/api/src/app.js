@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { pool } from './db.js';
 import { calculateBaseline, validateQuizAnswers, quizLevel } from './domain.js';
+import { pilotRouter } from './pilot.js';
 
 const PLACE_FIELDS = `SELECT p.id,p.name,p.kind,p.latitude,p.longitude,p.description,p.raw_tags,
  COALESCE(jsonb_object_agg(pf.feature_code,pf.weight) FILTER (WHERE pf.feature_code IS NOT NULL),'{}'::jsonb) AS features
@@ -37,6 +38,7 @@ export function createApp() {
    req.userId=id;next();
   }catch(e){next(e)}
  });
+ app.use('/api/v1/pilot-2', pilotRouter());
  app.get('/api/v1/quizzes',async(req,res,next)=>{
   try {
    const r=await pool.query(`SELECT q.id,q.title,q.description,q.domain,q.xp_reward AS "xpReward",

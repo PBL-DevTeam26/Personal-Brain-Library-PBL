@@ -10,6 +10,7 @@ function Screens(){
   <Stack.Screen name="quiz/[id]" options={{title:'Quiz'}}/>
   <Stack.Screen name="explore" options={{title:'Udforsk kortet'}}/>
   <Stack.Screen name="profile" options={{title:`Person ${person.number} · Min profil`}}/>
+  <Stack.Screen name="pilot" options={{title:'ExploreXP · Pilot 2'}}/>
  </Stack>;
 }
 export default function RootLayout(){return <ParticipantProvider><Screens/></ParticipantProvider>}
